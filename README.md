@@ -2,7 +2,7 @@
 
 **Single-camera scouting infrastructure for football.**
 
-Datum ingests broadcast video — the same 1080p feed your television sees — and produces searchable per-player style embeddings derived from observed on-pitch behaviour. No multi-camera rig. No per-stadium calibration. No proprietary sensor mesh.
+Datum ingests broadcast video, the same 1080p feed your television sees, and produces searchable per-player style embeddings derived from observed on-pitch behaviour. No multi-camera rig. No per-stadium calibration. No proprietary sensor mesh.
 
 If you can stream the match, you can index it.
 
@@ -21,7 +21,7 @@ This is the open-source baseline for what professional scouting platforms cost s
 | What does not work yet | Player2Vec training, search API, identity continuity through occlusion. |
 | Tested on | WSL2 / Ubuntu 22.04, Python 3.11, CUDA 12.x, RTX 40-series. |
 
-We ship `0.1` before we promise `1.0`.
+This project ships `0.1` before promising `1.0`.
 
 ---
 
@@ -35,19 +35,19 @@ The target is a representation good enough that **"find me three players who pla
 
 | | |
 |---|---|
-| **Not** a score predictor | We do not predict match outcomes. |
+| **Not** a score predictor | Datum does not predict match outcomes. |
 | **Not** a betting tool | The codebase contains no odds ingestion. Build that elsewhere. |
-| **Not** a free knockoff of Opta or StatsBomb | We are *complementary* to licensed event data. If you have a feed, Datum will use it and produce better results. |
-| **Not** multi-camera | Multi-camera capture is solved by people with more budget than us. Single-camera broadcast is where the leverage is. |
+| **Not** a free knockoff of Opta or StatsBomb | Datum is *complementary* to licensed event data. If you have a feed, Datum will use it and produce better results. |
+| **Not** multi-camera | Multi-camera capture is solved by people with budgets this project does not have. Single-camera broadcast is where the leverage is. |
 | **Not** a wrapper around a frontier LLM | This is computer vision, geometry, and representation learning. There is no chatbot in here. |
 
 ---
 
 ## Why this exists
 
-Professional scouting tools gate this category at price points that exclude roughly 95% of the global football pyramid. Academy directors in Senegal, second-division clubs in Paraguay, university analytics programs — none of them have €50K/year for a tracking license. They do, however, have YouTube and a GPU.
+Professional scouting tools gate this category at price points that exclude roughly 95% of the global football pyramid. Academy directors in Senegal, second-division clubs in Paraguay, university analytics programs: none of them have €50K/year for a tracking license. They do, however, have YouTube and a GPU.
 
-Datum is the proposition that broadcast video plus modern CV is, in 2026, sufficient for a credible scouting pipeline. We do not promise StatsBomb quality. We promise something materially better than "watching the tape and writing notes."
+Datum is the proposition that broadcast video plus modern CV is, in 2026, sufficient for a credible scouting pipeline. The claim is not StatsBomb quality. The claim is something materially better than "watching the tape and writing notes."
 
 ---
 
@@ -86,7 +86,7 @@ Datum is the proposition that broadcast video plus modern CV is, in 2026, suffic
                       └───────────────┘
 ```
 
-Each block is a swappable module behind a stable interface. Detector adapters live behind `datum.cv.detect.Detector`. Embedding adapters live behind `datum.embed.Encoder`. Bring your own model — the contract is small and documented.
+Each block is a swappable module behind a stable interface. Detector adapters live behind `datum.cv.detect.Detector`. Embedding adapters live behind `datum.embed.Encoder`. Bring your own model. The contract is small and documented.
 
 ### Design posture
 
@@ -94,7 +94,7 @@ Each block is a swappable module behind a stable interface. Detector adapters li
 |---|---|
 | Systems-first, not model-first | Robust data generation and physical constraints carry more weight than parameter counts. A 30M-parameter model on clean, geometrically-correct features will beat a 3B-parameter model on noisy pixels. |
 | Determinism by default | Every stage is a deterministic function of `(input artifacts, config)`. Re-runs produce bitwise-identical outputs. |
-| Fail loud, fail early | We refuse 480p feeds rather than emit silent garbage. Confidence is logged alongside every output. |
+| Fail loud, fail early | 480p feeds are refused outright rather than processed into silent garbage. Confidence is logged alongside every output. |
 | Stage isolation | No stage may read from another stage's internal state. Only declared artifacts. |
 | The library is not the app | `src/datum/` is a library. The CLI and API are clients of it. Build your own client if you want to. |
 
@@ -104,7 +104,7 @@ Each block is a swappable module behind a stable interface. Detector adapters li
 
 ```
 datum/
-├── src/datum/         the library — public surface lives here
+├── src/datum/         the library. Public surface lives here.
 │   ├── ingest/        video demux, scene cuts, sampling
 │   ├── cv/            detection, tracking, pose, pitch homography
 │   │   ├── detect/
@@ -126,58 +126,77 @@ datum/
 ├── data/              local data lake (gitignored by default)
 ├── docker/            service images and compose files
 ├── docs/              architecture, ADRs, contributor guides
-├── notebooks/         exploration only — not part of the library
+├── notebooks/         exploration only. Not part of the library.
 ├── scripts/           one-shot ops (bootstrap, reindex, download samples)
 ├── tests/             unit · integration · golden
 └── benchmarks/        throughput and accuracy regression suite
 ```
 
-Anything under `notebooks/` is **not** part of the public surface. We will not preserve compatibility for code you imported from a notebook.
+Anything under `notebooks/` is **not** part of the public surface. Compatibility is not preserved for code imported from a notebook.
 
 ---
 
-## Quickstart (WSL2)
+## Quickstart
 
-The primary supported environment is WSL2 / Ubuntu 22.04 on Windows 11 with an Nvidia GPU. Native Linux works. macOS works for the non-CV bits. Native Windows is not supported and will not be.
+Two supported paths: native Windows (recommended for solo development on the kind of i9 / RTX 40-series laptop this project is built on) and WSL2 / Linux (recommended for contributors who already live there or who need Linux-only CV libraries that this project does not yet depend on).
 
-### Prerequisites
+Native Windows is the default. Switch to WSL2 when (and only when) a Linux-only dependency forces it.
+
+### Prerequisites (both paths)
 
 | Component | Requirement |
 |---|---|
-| OS | WSL2 / Ubuntu 22.04 (or native Linux) |
-| Python | 3.11.x — we pin minor versions; 3.12 is not yet validated |
-| GPU | CUDA 12.x, ≥ 8 GB VRAM for inference, ≥ 16 GB recommended for training |
-| Disk | ≥ 50 GB free in the WSL filesystem. Broadcast video is large. |
-| Docker | Optional, required only for the index/search services |
-| `uv` | Installed automatically by the bootstrap script |
+| Python | 3.11.x. Minor version is pinned; 3.12 is not yet validated. |
+| GPU | CUDA 12.x, ≥ 8 GB VRAM for inference, ≥ 16 GB recommended for training. |
+| Disk | ≥ 50 GB free on the drive holding `data/`. Broadcast video is large. |
+| Docker | Optional. Required only for the index/search services. |
+| `uv` | Installed automatically by the bootstrap script. |
 
-### Setup
+### Path A. Native Windows (recommended)
 
-```bash
-git clone https://github.com/your-org/datum.git
-cd datum
-./scripts/bootstrap_wsl.sh
-```
+1. Install Python 3.11 from python.org. Do **not** use the Microsoft Store build; its sandboxed file paths break things in subtle ways. `winget install Python.Python.3.11` is the cleanest one-liner.
+2. Install `uv`: `winget install --id=astral-sh.uv -e` or `irm https://astral.sh/uv/install.ps1 | iex`.
+3. Verify the GPU is visible: open PowerShell, run `nvidia-smi`. Driver 550 or newer and CUDA 12.4 or newer is the comfortable floor.
+4. From the repo directory:
 
-That script does the following:
+   ```powershell
+   cd D:\path\to\datum
+   .\scripts\bootstrap.ps1
+   ```
 
-| Step | Action |
-|---|---|
-| 1 | Installs `uv` if missing |
-| 2 | Creates `.venv/` via `uv venv` |
-| 3 | Installs pinned dependencies from `pyproject.toml` |
-| 4 | Downloads a small sample match (1.2 GB) into `data/samples/` |
-| 5 | Runs the smoke test against the first 60 seconds |
+   That script does the same five things `bootstrap_wsl.sh` does, with the Windows-correct equivalents. Output lands in the same place.
 
-If it finishes clean you'll see `bootstrap ok` and a path to the smoke-test artifacts. If it does not, read the last 40 lines of the log before opening an issue.
+5. If `nvidia-smi` showed a healthy GPU but `torch.cuda.is_available()` is `False` after bootstrap, the CPU wheel was selected. Reinstall against the CUDA index:
 
-### About WSL2 paths — read this
+   ```powershell
+   uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+   ```
 
-> **Do not put video data under `/mnt/c/` or any Windows-mounted drive.** Frame decode drops from ~240 fps to ~9 fps just from crossing the filesystem boundary. We have measured it. It is not a typo.
+A note on paths. On Windows there is no `/mnt/` performance trap; native NTFS is fine. Keep `data/` on the same drive as the repo (typically D:) if disk pressure on C: is a concern.
 
-Keep `data/` inside the WSL filesystem (`~/datum/data` or similar). The bootstrap script enforces this and will refuse to run from a `/mnt/` path. If you must edit code from Windows-side VSCode, that's fine — Remote-WSL handles it correctly. But the data lives on the Linux side. Always.
+### Path B. WSL2 / Linux
 
-A second WSL2 nuisance: line endings. The repo enforces LF via `.gitattributes`. If you committed CRLF, CI will reject the PR. Fix your editor, not ours.
+1. Open WSL2 (Ubuntu 22.04 recommended). Native Linux is identical from here.
+2. Clone the repo into the WSL filesystem (e.g. `~/datum`), **not** `/mnt/c/...` or `/mnt/d/...`:
+
+   ```bash
+   cd ~
+   git clone https://github.com/your-org/datum.git
+   cd datum
+   ./scripts/bootstrap_wsl.sh
+   ```
+
+3. The script installs `uv`, creates `.venv/`, syncs pinned deps, downloads the sample match, and runs the smoke test.
+
+#### The `/mnt/` warning, made explicit
+
+> **Do not put video data under `/mnt/c/` or any Windows-mounted drive when working from WSL2.** Frame decode drops from roughly 240 fps to roughly 9 fps just from crossing the filesystem boundary. The bootstrap script refuses to run from a `/mnt/` path for this reason.
+
+If you must edit code from Windows-side VSCode against a WSL clone, Remote-WSL handles it correctly. But the data lives on the Linux side.
+
+#### Line endings
+
+The repo enforces LF via `.gitattributes`. On Windows-side git, set `core.autocrlf=input` so CRLF does not creep in via your editor.
 
 ---
 
@@ -189,7 +208,7 @@ uv run datum pipeline run \
   --match data/samples/sample_match.mp4 \
   --config configs/pipelines/default.yaml
 
-# step-by-step — useful when debugging which stage emitted the garbage
+# step-by-step. Useful when debugging which stage emitted the garbage.
 uv run datum ingest    --match <path>
 uv run datum cv        --run <run-id>
 uv run datum spatial   --run <run-id>
@@ -202,13 +221,13 @@ uv run datum index     --run <run-id>
 uv run datum search "players like Modrić, U-21, South American leagues only" --k 10
 ```
 
-Every stage emits a manifest. If you find a bug, attach the manifest in the issue. Without it, we cannot reproduce, and we will close the issue.
+Every stage emits a manifest. If you find a bug, attach the manifest in the issue. Without it the bug is not reproducible, and the issue will be closed.
 
 ---
 
 ## Swapping components
 
-The whole point of the layered architecture is that you can replace any block without touching the others. Example — your own detector:
+The whole point of the layered architecture is that you can replace any block without touching the others. Example, your own detector:
 
 ```python
 from datum.cv.detect import Detector, register
@@ -248,18 +267,18 @@ See `docs/extensibility.md` for the full contract and the test suite you need to
 
 ## Known limitations
 
-We say the quiet parts out loud.
+The quiet parts, said out loud:
 
 | Limitation | Status |
 |---|---|
-| Broadcast feeds below 720p produce unreliable pitch homography. | We detect and refuse them rather than emit silent garbage. |
+| Broadcast feeds below 720p produce unreliable pitch homography. | Datum detects and refuses them rather than emit silent garbage. |
 | Single-camera tracking through heavy occlusion swaps identities. | Mitigated with re-ID embeddings. Not solved. |
-| Broadcast cuts to crowd / bench / commentators are unusable. | The ingest stage segments them out. Expect 8–20% of total broadcast time to be discarded. |
+| Broadcast cuts to crowd / bench / commentators are unusable. | The ingest stage segments them out. Expect 8 to 20% of total broadcast time to be discarded. |
 | Embedding quality is bound by training data diversity. | A model pretrained on European broadcasts will be biased toward European broadcast conventions. Documented in `docs/bias.md`. |
-| Lobbed passes and aerial duels frequently lose the ball above the frame. | Inherent to broadcast framing. We mark these intervals as low-confidence. |
+| Lobbed passes and aerial duels frequently lose the ball above the frame. | Inherent to broadcast framing. These intervals are marked low-confidence. |
 | GPU memory will spike at scene cuts where the detector re-initialises. | Configure `cv.detector.batch_size` down on smaller cards. |
 
-If you find a failure mode that's not on this list, open an issue with the video timestamp and the run manifest. We add to the list as we find them.
+If you find a failure mode that is not on this list, open an issue with the video timestamp and the run manifest. The list grows as failure modes surface.
 
 ---
 
@@ -286,9 +305,9 @@ Read `docs/contributing.md` first. The short version:
 | Rule | Why |
 |---|---|
 | Bug reports beat feature requests. | A reproducer is worth a thousand vision decks. |
-| New detectors, encoders, vector stores: behind existing interfaces. Don't fork the pipeline. | We need every adapter to share the same contract. |
-| Performance regressions > 5% on the benchmark suite block merge. | We treat speed as a feature. |
-| We do not accept generated PR descriptions. | If you can't summarise your own change, neither can we. |
+| New detectors, encoders, vector stores: behind existing interfaces. Don't fork the pipeline. | Every adapter must share the same contract. |
+| Performance regressions > 5% on the benchmark suite block merge. | Speed is treated as a feature. |
+| Generated PR descriptions are rejected. | If you can't summarise your own change, a reviewer cannot either. |
 | Add a test that fails without your change, then passes with it. | Standard. |
 
 Code style is enforced in CI: `ruff format`, `ruff check`, `mypy --strict` on `src/datum/`.
@@ -299,7 +318,7 @@ Code style is enforced in CI: `ruff format`, `ruff check`, `mypy --strict` on `s
 
 Apache-2.0. See `LICENSE`.
 
-Training data is **not** part of this license. You are responsible for the legality of the video you ingest into your own instance. Don't email us about it. Don't open issues about it. We are an engineering project, not a clearinghouse.
+Training data is **not** part of this license. You are responsible for the legality of the video you ingest into your own instance. Don't email about it. Don't open issues about it. Datum is an engineering project, not a clearinghouse.
 
 ---
 
@@ -315,8 +334,8 @@ If you use Datum in academic work:
 }
 ```
 
-We will replace this entry with a proper publication once the embedding model is validated.
+This entry will be replaced with a proper publication once the embedding model is validated.
 
 ---
 
-This is going to be a long project. We are okay with that.
+This is going to be a long project. That is fine.

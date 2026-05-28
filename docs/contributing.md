@@ -9,9 +9,9 @@ The README has the short version. This is the long one.
 | | |
 |---|---|
 | Found a bug? | Open an issue with a video timestamp, a run manifest, and the smallest reproducer you can manage. |
-| Want a feature? | Open a discussion first. We close feature PRs that arrive without one. |
+| Want a feature? | Open a discussion first. This project closes feature PRs that arrive without one. |
 | New adapter (detector, tracker, encoder, vector store)? | Skip the discussion. Open a PR against the existing interface. |
-| Refactor? | Open an issue describing what's wrong with the current code. We don't merge taste-based refactors. |
+| Refactor? | Open an issue describing what's wrong with the current code. Taste-based refactors will not be merged. |
 
 ---
 
@@ -45,12 +45,12 @@ CI runs every one. A red CI run will not be merged. Don't ask.
 
 ## Performance
 
-We treat speed as a feature. The benchmark suite tracks ingestion fps, end-to-end pipeline wall-clock, and per-stage GPU memory.
+Speed is treated as a feature. The benchmark suite tracks ingestion fps, end-to-end pipeline wall-clock, and per-stage GPU memory.
 
 | Regression class | Policy |
 |---|---|
 | < 2% on any tracked metric | Acceptable. Mention it in the PR. |
-| 2–5% | Requires justification. Reviewer's call. |
+| 2 to 5% | Requires justification. Reviewer's call. |
 | > 5% | Blocks merge. Either fix it or split the PR. |
 
 The exception is correctness fixes that happen to cost performance. Those are negotiated case by case.
@@ -61,20 +61,20 @@ The exception is correctness fixes that happen to cost performance. Those are ne
 
 | | |
 |---|---|
-| Commit message format | `<area>: <imperative summary>` — e.g. `cv.detect: handle 1080i fields correctly` |
-| PR title | Same convention. The title is what lands on `main` if we squash. |
-| PR description | Write it yourself. If we detect generated text, we will ask you to rewrite. |
+| Commit message format | `<area>: <imperative summary>`, e.g. `cv.detect: handle 1080i fields correctly` |
+| PR title | Same convention. The title is what lands on `main` after squash. |
+| PR description | Write it yourself. Generated text will be sent back for rewrite. |
 | Linked issue | Required for anything other than typo / docs PRs. |
 
-Squash on merge. We don't keep noisy histories.
+Squash on merge. Noisy histories are not kept.
 
 ---
 
-## What we will not accept
+## What this project will not accept
 
 | | |
 |---|---|
-| Generated PR descriptions or commit messages. | If you can't summarise your change, neither can we. |
+| Generated PR descriptions or commit messages. | If you can't summarise your own change, a reviewer cannot either. |
 | Detectors / encoders behind paid APIs without an open-source fallback. | OSS-first. Paid adapters live in separate repos. |
 | New top-level directories without an ADR. | The architecture is intentional. Argue for additions. |
 | `import *` anywhere in `src/datum/`. | Just no. |
@@ -85,10 +85,10 @@ Squash on merge. We don't keep noisy histories.
 
 ## Architecture decisions
 
-Material changes go through an ADR under `docs/adr/`. The format is short — one page is plenty. Existing ADRs are the template.
+Material changes go through an ADR under `docs/adr/`. The format is short; one page is plenty. Existing ADRs are the template.
 
 ---
 
 ## Reporting security issues
 
-Email the maintainers directly (see `MAINTAINERS.md` when it lands). Do not open a public issue for a security finding. We will credit responsible disclosure in the changelog.
+Email the maintainers directly (see `MAINTAINERS.md` when it lands). Do not open a public issue for a security finding. Responsible disclosure is credited in the changelog.

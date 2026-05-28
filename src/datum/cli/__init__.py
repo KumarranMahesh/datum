@@ -2,7 +2,7 @@
 
 Thin Typer wrapper. Real logic lives in the library; the CLI is just one
 of several possible clients. If you find yourself putting business logic
-here, you're doing it wrong — move it into the appropriate `datum.<stage>`
+here, you're doing it wrong. Move it into the appropriate `datum.<stage>`
 module and have the CLI call it.
 """
 

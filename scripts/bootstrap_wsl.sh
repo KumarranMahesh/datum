@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Bootstrap the Datum dev environment on WSL2 / Ubuntu 22.04.
 # Refuses to run from /mnt/* paths because broadcast video on a Windows drive
-# is a performance disaster we've already lived through once.
+# is a performance disaster this project has already lived through once.
 
 set -euo pipefail
 
@@ -18,7 +18,8 @@ case "$REPO_ROOT" in
         ;;
 esac
 
-# 2. OS sanity. We don't pretend to support macOS or native Windows in this script.
+# 2. OS sanity. This script does not pretend to support macOS or native Windows.
+#    For native Windows, use scripts/bootstrap.ps1.
 if [[ "$(uname -s)" != "Linux" ]]; then
     echo "error: bootstrap_wsl.sh expects Linux. on macOS install deps manually."
     exit 2
@@ -47,9 +48,10 @@ SAMPLE="data/samples/sample_match.mp4"
 if [[ ! -f "$SAMPLE" ]]; then
     echo "[4/5] downloading sample match (≈1.2 GB)"
     mkdir -p "$(dirname "$SAMPLE")"
-    # Placeholder URL — replace with the actual hosted sample before release.
-    # We intentionally don't pull from YouTube here; that's a contributor's problem.
-    echo "    (skipping — wire up SAMPLE_URL before release)"
+    # Placeholder URL. Replace with the actual hosted sample before release.
+    # Pulling from YouTube is intentionally out of scope here; that is a
+    # contributor's problem.
+    echo "    (skipping. Wire up SAMPLE_URL before release.)"
 else
     echo "[4/5] sample match already present"
 fi

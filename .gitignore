@@ -37,7 +37,7 @@ coverage.xml
 Thumbs.db
 desktop.ini
 
-# Data lake — everything under data/ is local-only by default.
+# Data lake. Everything under data/ is local-only by default.
 # If you want a file tracked, add an explicit exception below.
 data/**
 !data/.gitkeep
@@ -64,10 +64,10 @@ wandb/
 *.log
 logs/
 
-# Local config — committed configs live in configs/
+# Local config. Committed configs live in configs/
 .env
 .env.*
 !.env.example
 
-# Notebooks — outputs only, not the notebook itself
+# Notebooks. Outputs only, not the notebook itself.
 notebooks/**/.ipynb_checkpoints/

@@ -1,6 +1,6 @@
 """Detection adapter contract.
 
-Every detector — YOLO, RT-DETR, your in-house thing — implements `Detector`
+Every detector (YOLO, RT-DETR, your in-house thing) implements `Detector`
 and registers itself via `@register`. Pipelines look detectors up by name
 from the registry, so the only thing the rest of the codebase ever sees is
 this interface.
@@ -19,8 +19,8 @@ from typing import Callable
 import numpy as np
 
 
-# Frames come in as (N, H, W, 3) uint8 in BGR — same convention OpenCV uses.
-# We don't normalise here; that's the detector's problem.
+# Frames come in as (N, H, W, 3) uint8 in BGR, the same convention OpenCV uses.
+# No normalisation here; that's the detector's problem.
 FrameBatch = np.ndarray
 
 
@@ -73,9 +73,9 @@ class Detector(ABC):
 
 # --- registry ---------------------------------------------------------------
 #
-# Tiny on purpose. We don't need entrypoint plugins for this; a dict and a
-# decorator carry the whole project until we have >50 adapters, which we
-# don't and won't for a while.
+# Tiny on purpose. Entrypoint plugins are overkill here; a dict and a
+# decorator carry the whole project until there are >50 adapters, and
+# that day is not coming soon.
 
 _REGISTRY: dict[str, type[Detector]] = {}
 
@@ -84,8 +84,7 @@ def register(name: str) -> Callable[[type[Detector]], type[Detector]]:
     def _wrap(cls: type[Detector]) -> type[Detector]:
         if name in _REGISTRY:
             # Loud failure on collision. Silent overrides have wasted
-            # roughly a person-year of debugging time across this team's
-            # past lives.
+            # roughly a person-year of debugging time across past projects.
             raise ValueError(f"detector '{name}' already registered: {_REGISTRY[name]!r}")
         cls.name = name
         _REGISTRY[name] = cls
