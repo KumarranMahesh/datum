@@ -298,7 +298,7 @@ Dates are deliberately absent. Open-source projects ship when they ship.
 
 ---
 
-## Contributing
+<!-- ## Contributing
 
 Read `docs/contributing.md` first. The short version:
 
@@ -312,7 +312,7 @@ Read `docs/contributing.md` first. The short version:
 
 Code style is enforced in CI: `ruff format`, `ruff check`, `mypy --strict` on `src/datum/`.
 
----
+--- -->
 
 ## License
 
@@ -322,7 +322,7 @@ Training data is **not** part of this license. You are responsible for the legal
 
 ---
 
-## Citing
+<!-- ## Citing
 
 If you use Datum in academic work:
 
@@ -336,6 +336,6 @@ If you use Datum in academic work:
 
 This entry will be replaced with a proper publication once the embedding model is validated.
 
----
+--- -->
 
 This is going to be a long project. That is fine.
