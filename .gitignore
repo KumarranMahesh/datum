@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Tooling
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.tox/
+.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Data lake — everything under data/ is local-only by default.
+# If you want a file tracked, add an explicit exception below.
+data/**
+!data/.gitkeep
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+!data/models/.gitkeep
+!data/samples/.gitkeep
+
+# Model checkpoints
+*.pt
+*.pth
+*.onnx
+*.engine
+*.safetensors
+
+# Run artifacts
+runs/
+artifacts/
+mlruns/
+wandb/
+
+# Logs
+*.log
+logs/
+
+# Local config — committed configs live in configs/
+.env
+.env.*
+!.env.example
+
+# Notebooks — outputs only, not the notebook itself
+notebooks/**/.ipynb_checkpoints/
