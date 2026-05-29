@@ -1,0 +1,10 @@
+# Default ingest config.
+# Mirrors the IngestConfig defaults in src/datum/ingest/schemas.py.
+# Comments are the source of truth for what each knob does; do not duplicate.
+
+sample_fps: 5.0
+min_resolution: 720
+scene_cut_threshold: 0.35
+scene_classifier: histogram-v1
+image_format: jpg
+image_quality: 92

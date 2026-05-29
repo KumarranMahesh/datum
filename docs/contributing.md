@@ -11,7 +11,7 @@ The README has the short version. This is the long one.
 | Found a bug? | Open an issue with a video timestamp, a run manifest, and the smallest reproducer you can manage. |
 | Want a feature? | Open a discussion first. This project closes feature PRs that arrive without one. |
 | New adapter (detector, tracker, encoder, vector store)? | Skip the discussion. Open a PR against the existing interface. |
-| Refactor? | Open an issue describing what's wrong with the current code. Taste-based refactors will not be merged. |
+| Refactor? | Open an issue describing what's wrong with the current code. Refactors without a concrete problem behind them are usually held back. |
 
 ---
 
@@ -39,7 +39,7 @@ If your adapter needs a heavyweight optional dependency (e.g. `faiss-gpu`, `onnx
 | `pytest` | Unit + integration | `make test` |
 | Benchmark suite | Throughput regression | `make bench` |
 
-CI runs every one. A red CI run will not be merged. Don't ask.
+CI runs every one. A red CI run blocks merge until it's fixed.
 
 ---
 
@@ -66,18 +66,18 @@ The exception is correctness fixes that happen to cost performance. Those are ne
 | PR description | Write it yourself. Generated text will be sent back for rewrite. |
 | Linked issue | Required for anything other than typo / docs PRs. |
 
-Squash on merge. Noisy histories are not kept.
+Squash on merge keeps the history readable.
 
 ---
 
-## What this project will not accept
+## What to avoid in PRs
 
 | | |
 |---|---|
-| Generated PR descriptions or commit messages. | If you can't summarise your own change, a reviewer cannot either. |
+| Generated PR descriptions or commit messages. | A summary in your own words helps reviewers follow what changed. |
 | Detectors / encoders behind paid APIs without an open-source fallback. | OSS-first. Paid adapters live in separate repos. |
 | New top-level directories without an ADR. | The architecture is intentional. Argue for additions. |
-| `import *` anywhere in `src/datum/`. | Just no. |
+| `import *` anywhere in `src/datum/`. | It hides the import surface and trips up static analysis. |
 | Notebook-driven library changes. | Notebooks are for exploration. Promote code into the library properly. |
 | Dependencies added without a justification in the PR. | Every dep is a maintenance cost. |
 

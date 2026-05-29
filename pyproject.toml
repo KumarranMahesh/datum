@@ -39,6 +39,9 @@ index  = ["faiss-cpu>=1.8"]
 qdrant = ["qdrant-client>=1.9"]
 milvus = ["pymilvus>=2.4"]
 store  = ["sqlalchemy>=2.0", "psycopg[binary]>=3.1", "alembic>=1.13"]
+# Ultralytics is AGPL-3.0. Kept behind an explicit extra so the base
+# install stays Apache-2.0 friendly. See src/datum/cv/detect/ultralytics_yolo.py.
+yolo   = ["ultralytics>=8.3"]
 dev = [
     "ruff>=0.4",
     "mypy>=1.10",

@@ -6,8 +6,6 @@ Datum ingests broadcast video, the same 1080p feed your television sees, and pro
 
 If you can stream the match, you can index it.
 
-This is the open-source baseline for what professional scouting platforms cost six figures a year to use.
-
 ---
 
 ## Status
@@ -36,10 +34,10 @@ The target is a representation good enough that **"find me three players who pla
 | | |
 |---|---|
 | **Not** a score predictor | Datum does not predict match outcomes. |
-| **Not** a betting tool | The codebase contains no odds ingestion. Build that elsewhere. |
+| **Not** a betting tool | The codebase contains no odds ingestion or market data. |
 | **Not** a free knockoff of Opta or StatsBomb | Datum is *complementary* to licensed event data. If you have a feed, Datum will use it and produce better results. |
 | **Not** multi-camera | Multi-camera capture is solved by people with budgets this project does not have. Single-camera broadcast is where the leverage is. |
-| **Not** a wrapper around a frontier LLM | This is computer vision, geometry, and representation learning. There is no chatbot in here. |
+| **Not** a wrapper around a frontier LLM | The substance is computer vision, geometry, and representation learning. |
 
 ---
 
@@ -221,7 +219,7 @@ uv run datum index     --run <run-id>
 uv run datum search "players like Modrić, U-21, South American leagues only" --k 10
 ```
 
-Every stage emits a manifest. If you find a bug, attach the manifest in the issue. Without it the bug is not reproducible, and the issue will be closed.
+Every stage emits a manifest. If you hit a bug, attaching the manifest to the issue makes it much easier to reproduce on someone else's machine.
 
 ---
 
@@ -307,20 +305,20 @@ Read `docs/contributing.md` first. The short version:
 | Bug reports beat feature requests. | A reproducer is worth a thousand vision decks. |
 | New detectors, encoders, vector stores: behind existing interfaces. Don't fork the pipeline. | Every adapter must share the same contract. |
 | Performance regressions > 5% on the benchmark suite block merge. | Speed is treated as a feature. |
-| Generated PR descriptions are rejected. | If you can't summarise your own change, a reviewer cannot either. |
+| Please write PR descriptions in your own words. | A short summary you've written yourself helps reviewers follow what changed and why. |
 | Add a test that fails without your change, then passes with it. | Standard. |
 
 Code style is enforced in CI: `ruff format`, `ruff check`, `mypy --strict` on `src/datum/`.
 
 --- -->
 
-## License
+<!-- ## License
 
 Apache-2.0. See `LICENSE`.
 
-Training data is **not** part of this license. You are responsible for the legality of the video you ingest into your own instance. Don't email about it. Don't open issues about it. Datum is an engineering project, not a clearinghouse.
+Training data is **not** part of this license. You are responsible for the legality of any video you ingest into your own instance. Licensing questions sit outside the scope of this project, so the right place to take them is the rights-holder or a lawyer, rather than the issue tracker.
 
----
+--- -->
 
 <!-- ## Citing
 

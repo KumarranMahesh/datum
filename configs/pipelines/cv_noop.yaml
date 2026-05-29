@@ -1,0 +1,9 @@
+# Noop CV stage config. Runs the pipeline end to end without a real model.
+# Useful for smoke-testing the chain and confirming artifacts land where expected.
+
+detector: noop
+detector_config: {}
+
+batch_size: 8
+min_confidence: 0.0
+pitch_only: true

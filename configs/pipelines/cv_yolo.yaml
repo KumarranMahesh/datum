@@ -1,0 +1,17 @@
+# CV stage config using Ultralytics YOLO.
+# Note: ultralytics is AGPL-3.0. See src/datum/cv/detect/ultralytics_yolo.py.
+# Install: `uv sync --extra yolo`
+
+detector: ultralytics-yolo
+detector_config:
+  model_name: yolo11n.pt
+  device: auto
+  imgsz: 640
+  min_confidence: 0.25
+  iou: 0.45
+  # COCO classes: 0 = person, 32 = sports ball.
+  class_filter: [0, 32]
+
+batch_size: 8
+min_confidence: 0.25
+pitch_only: true

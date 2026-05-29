@@ -1,0 +1,9 @@
+# Smoke-test config. Lower sample rate, lower image quality, faster end to end.
+# Used by `make smoke` to validate the pipeline turns end to end in seconds.
+
+sample_fps: 2.0
+min_resolution: 720
+scene_cut_threshold: 0.35
+scene_classifier: histogram-v1
+image_format: jpg
+image_quality: 75
