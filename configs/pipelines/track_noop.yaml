@@ -1,0 +1,6 @@
+# Noop track stage config. Assigns a fresh track_id to every detection.
+# Useful for confirming pipeline wiring without committing to a real tracker.
+
+tracker: track-noop
+tracker_config: {}
+reset_on_scene_cut: false

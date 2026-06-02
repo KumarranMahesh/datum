@@ -275,6 +275,7 @@ The quiet parts, said out loud:
 | Embedding quality is bound by training data diversity. | A model pretrained on European broadcasts will be biased toward European broadcast conventions. Documented in `docs/bias.md`. |
 | Lobbed passes and aerial duels frequently lose the ball above the frame. | Inherent to broadcast framing. These intervals are marked low-confidence. |
 | GPU memory will spike at scene cuts where the detector re-initialises. | Configure `cv.detector.batch_size` down on smaller cards. |
+| The naive tracker fragments identities during fast broadcast pans. | The median-of-matched-pairs camera-shift estimator handles smooth pans within a scene but cannot recover the first frame transition after every reset, where shift starts at zero. Identity per scene is good; identity across scenes is not preserved, by design. The principled fix uses optical flow on background features and is planned for a later milestone. |
 
 If you find a failure mode that is not on this list, open an issue with the video timestamp and the run manifest. The list grows as failure modes surface.
 

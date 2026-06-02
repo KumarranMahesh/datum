@@ -1,0 +1,33 @@
+# Track stage config using ByteTrack.
+#
+# Tuned for broadcast football at 5 fps with a freely-panning camera.
+# Camera motion is compensated by a median-of-matches per-frame shift
+# estimator inside the tracker; see src/datum/cv/track/bytetrack.py.
+#
+# For stadium-fixed cameras (no panning), raise match_thresh toward 0.3
+# and new_track_thresh toward 0.5 to reduce ID swaps between close players.
+
+tracker: bytetrack
+tracker_config:
+  track_high_thresh: 0.4
+  track_low_thresh: 0.1
+  new_track_thresh: 0.4
+  match_thresh: 0.1
+  # max_age at 60 = 12 seconds at 5 fps. Empirically this is what holds
+  # identities through realistic broadcast occlusion (a player passing
+  # behind a teammate for several seconds, YOLO confidence dipping during
+  # a tight cluster). Shorter values fragment tracks visibly more on the
+  # validation clip. Stale identities are bounded by reset_on_scene_cut.
+  max_age: 60
+  min_hits: 1
+  # camera_motion_alpha = weight on the previous shift estimate. Higher
+  # smooths more; lower reacts more. 0.5 is a balanced default for
+  # broadcast pans which tend to be smooth across consecutive frames.
+  camera_motion_alpha: 0.5
+  min_matches_for_shift: 3
+
+# Reset the tracker at every scene boundary recorded by the ingest stage.
+# Broadcast feeds switch shots every 5 to 15 seconds; identities almost
+# never carry across a hard cut, so resetting prevents the tracker from
+# blindly stitching one shot's players onto the next.
+reset_on_scene_cut: true
