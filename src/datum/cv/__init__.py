@@ -27,6 +27,7 @@ from datum.cv.pipeline import run
 # Register bundled adapters by importing their modules. The side effect is
 # the @register decorator call inside each module.
 from datum.cv.detect import noop, ultralytics_yolo  # noqa: F401
+from datum.cv.pitch import noop as _pitch_noop  # noqa: F401
 from datum.cv.track import bytetrack as _track_bytetrack  # noqa: F401
 from datum.cv.track import noop as _track_noop  # noqa: F401
 
