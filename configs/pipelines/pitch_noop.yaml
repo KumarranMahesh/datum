@@ -1,0 +1,7 @@
+# Noop pitch solver config. Runs the pipeline end to end without
+# producing any homographies. Useful for confirming the chain works
+# before the real line-based solver lands.
+
+solver: pitch-noop
+solver_config: {}
+pitch_only: true

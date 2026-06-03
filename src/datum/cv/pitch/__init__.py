@@ -95,4 +95,11 @@ __all__ = [
     "available",
     "get",
     "register",
+    "run",
 ]
+
+
+# Pipeline import lives at the bottom so the PitchSolver class and the
+# registry helpers are already defined when pipeline.py back-imports
+# `get` from here.
+from datum.cv.pitch.pipeline import run  # noqa: E402

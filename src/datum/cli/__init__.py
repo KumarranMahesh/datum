@@ -21,6 +21,7 @@ from rich.console import Console
 
 if TYPE_CHECKING:
     from datum.cv import CvConfig
+    from datum.cv.pitch.schemas import PitchSolverConfig
     from datum.cv.track.schemas import TrackerConfig
     from datum.ingest import IngestConfig
 
@@ -169,6 +170,22 @@ def _load_track_config(path: Path | None, *, fallback_tracker: str) -> TrackerCo
             f"{path}: top-level YAML must be a mapping, got {type(raw).__name__}"
         )
     return TrackerConfig(**raw)
+
+
+def _load_pitch_config(
+    path: Path | None, *, fallback_solver: str
+) -> PitchSolverConfig:
+    """Load a PitchSolverConfig from YAML, or build a minimal one from fallback_solver."""
+    from datum.cv.pitch.schemas import PitchSolverConfig
+
+    if path is None:
+        return PitchSolverConfig(solver=fallback_solver)
+    raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    if not isinstance(raw, dict):
+        raise typer.BadParameter(
+            f"{path}: top-level YAML must be a mapping, got {type(raw).__name__}"
+        )
+    return PitchSolverConfig(**raw)
 
 
 @app.command()
@@ -365,6 +382,112 @@ def track(
     _console.print(f"  tracker_wall_s       {counters.tracker_wall_s:.2f}")
     _console.print(
         f"  artifacts at         {(track_runs_root / manifest.run_id).resolve()}"
+    )
+
+
+@app.command()
+def pitch(
+    cv_run_dir: Annotated[
+        Path,
+        typer.Argument(
+            help="Path to a completed CV run directory.",
+            exists=True,
+            file_okay=False,
+            dir_okay=True,
+            readable=True,
+        ),
+    ],
+    solver: Annotated[
+        str,
+        typer.Option(
+            "--solver",
+            "-s",
+            help="Registered pitch solver name. Ignored when --config is provided.",
+        ),
+    ] = "pitch-noop",
+    config: Annotated[
+        Path | None,
+        typer.Option(
+            "--config",
+            "-c",
+            help="YAML config file. When provided, --solver is ignored.",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+        ),
+    ] = None,
+    pitch_runs_root: Annotated[
+        Path,
+        typer.Option(
+            "--pitch-runs-root",
+            help="Directory where pitch run artifacts are written.",
+        ),
+    ] = Path("data/pitch_runs"),
+    ingest_runs_root: Annotated[
+        Path,
+        typer.Option(
+            "--ingest-runs-root",
+            help=(
+                "Where to look for the parent ingest run. The pitch solver "
+                "reads images from here, not from the CV run."
+            ),
+        ),
+    ] = Path("data/runs"),
+    overwrite: Annotated[
+        bool,
+        typer.Option(
+            "--overwrite",
+            help="Re-run even if a complete pitch manifest already exists.",
+        ),
+    ] = False,
+) -> None:
+    """Solve image-to-pitch homography on the images of a CV run's parent ingest.
+
+    Reads the CV manifest for the chain audit, resolves the parent ingest
+    run, walks its frames, calls the configured solver, and writes one
+    FramePitch record per processed frame under `--pitch-runs-root`.
+    """
+    from datum.cv.pitch import run as pitch_run
+
+    cfg = _load_pitch_config(config, fallback_solver=solver)
+
+    _console.print(f"[dim]cv_run_dir[/dim] {cv_run_dir}")
+    _console.print(f"[dim]config[/dim]\n{cfg.model_dump_json(indent=2)}")
+
+    try:
+        manifest = pitch_run(
+            cv_run_dir,
+            cfg,
+            pitch_runs_root=pitch_runs_root,
+            ingest_runs_root=ingest_runs_root,
+            overwrite=overwrite,
+        )
+    except Exception as exc:  # noqa: BLE001
+        import os
+
+        if os.environ.get("DATUM_DEBUG"):
+            raise
+        _console.print(f"\n[bold red]pitch run failed[/bold red]: {exc}")
+        raise typer.Exit(code=1) from exc
+
+    counters = manifest.counters
+    assert counters is not None, "pipeline must set counters on a successful run"
+
+    mean_err = counters.mean_reprojection_error_px
+    mean_err_str = f"{mean_err:.2f}" if mean_err is not None else "n/a"
+
+    _console.print()
+    _console.print(f"[bold green]pitch_run_id[/bold green]     {manifest.run_id}")
+    _console.print(f"  solver               {manifest.solver_name}")
+    _console.print(f"  cv_run_id            {manifest.cv_run_id}")
+    _console.print(f"  frames_in            {counters.frames_in}")
+    _console.print(f"  frames_processed     {counters.frames_processed}")
+    _console.print(f"  frames_with_H        {counters.frames_with_homography}")
+    _console.print(f"  mean_reproj_err_px   {mean_err_str}")
+    _console.print(f"  solver_wall_s        {counters.solver_wall_s:.2f}")
+    _console.print(
+        f"  artifacts at         {(pitch_runs_root / manifest.run_id).resolve()}"
     )
 
 
